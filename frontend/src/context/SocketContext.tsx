@@ -34,9 +34,10 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
 
     // Connect to Socket.io backend with auth token
-    const newSocket = io('http://localhost:5000', {
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || (import.meta.env.PROD ? 'https://real-time-client-project-dashboard-role-717a.onrender.com' : 'http://localhost:5000');
+    const newSocket = io(backendUrl, {
       auth: { token: accessToken },
-      transports: ['websocket'],
+      transports: ['websocket', 'polling'],
     });
 
     newSocket.on('connect', () => {

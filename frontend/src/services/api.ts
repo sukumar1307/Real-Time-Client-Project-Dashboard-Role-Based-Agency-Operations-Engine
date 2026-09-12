@@ -9,8 +9,16 @@ export const setAccessToken = (token: string | null) => {
 
 export const getAccessToken = () => accessTokenMemory;
 
+const getBackendUrl = () => {
+  if (import.meta.env.VITE_BACKEND_URL) return import.meta.env.VITE_BACKEND_URL;
+  if (import.meta.env.PROD) return 'https://real-time-client-project-dashboard-role-717a.onrender.com';
+  return '';
+};
+
+const BASE_URL = getBackendUrl() ? `${getBackendUrl()}/api` : '/api';
+
 export const api = axios.create({
-  baseURL: '/api',
+  baseURL: BASE_URL,
   withCredentials: true, // required to send/receive HttpOnly cookies
   headers: {
     'Content-Type': 'application/json',
@@ -67,8 +75,9 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
+        const refreshUrl = `${BASE_URL}/auth/refresh`;
         const refreshResponse = await axios.post(
-          '/api/auth/refresh',
+          refreshUrl,
           {},
           { withCredentials: true }
         );
